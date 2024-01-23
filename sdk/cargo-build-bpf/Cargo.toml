@@ -11,7 +11,7 @@ edition = { workspace = true }
 
 [dependencies]
 log = { workspace = true, features = ["std"] }
-THIS-solana-logger = { workspace = true }
+solana-logger = { workspace = true }
 
 [features]
 program = []

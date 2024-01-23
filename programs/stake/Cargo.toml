@@ -12,15 +12,15 @@ edition = { workspace = true }
 [dependencies]
 bincode = { workspace = true }
 log = { workspace = true }
-THIS-solana-config-program = { workspace = true }
-THIS-solana-program-runtime = { workspace = true }
-THIS-solana-sdk = { workspace = true }
-THIS-solana-vote-program = { workspace = true }
+solana-config-program = { workspace = true }
+solana-program-runtime = { workspace = true }
+solana-sdk = { workspace = true }
+solana-vote-program = { workspace = true }
 
 [dev-dependencies]
 assert_matches = { workspace = true }
 proptest = { workspace = true }
-THIS-solana-logger = { workspace = true }
+solana-logger = { workspace = true }
 test-case = { workspace = true }
 
 [build-dependencies]

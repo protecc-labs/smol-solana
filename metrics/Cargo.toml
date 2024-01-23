@@ -22,7 +22,7 @@ reqwest = { workspace = true, features = [
     "rustls-tls",
     "json",
 ] }
-THIS-solana-sdk = { workspace = true }
+solana-sdk = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]

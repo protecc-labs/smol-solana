@@ -11,9 +11,9 @@ edition = { workspace = true }
 
 [dependencies]
 clap = "2.33.0"
-THIS-solana-clap-utils = { workspace = true }
-THIS-solana-rpc-client = { workspace = true }
-THIS-solana-sdk = { workspace = true }
+solana-clap-utils = { workspace = true }
+solana-rpc-client = { workspace = true }
+solana-sdk = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]

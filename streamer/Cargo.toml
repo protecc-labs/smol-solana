@@ -28,9 +28,9 @@ quinn-proto = { workspace = true }
 rand = { workspace = true }
 rcgen = { workspace = true }
 rustls = { workspace = true, features = ["dangerous_configuration"] }
-THIS-solana-metrics = { workspace = true }
-THIS-solana-perf = { workspace = true }
-THIS-solana-sdk = { workspace = true }
+solana-metrics = { workspace = true }
+solana-perf = { workspace = true }
+solana-sdk = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 x509-parser = { workspace = true }

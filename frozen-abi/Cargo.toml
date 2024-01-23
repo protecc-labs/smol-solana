@@ -18,7 +18,7 @@ serde = { workspace = true, features = ["derive", "rc"] }
 serde_bytes = { workspace = true }
 serde_derive = { workspace = true }
 sha2 = { workspace = true }
-THIS-solana-frozen-abi-macro = { workspace = true }
+solana-frozen-abi-macro = { workspace = true }
 thiserror = { workspace = true }
 
 [target.'cfg(not(target_os = "solana"))'.dependencies]
@@ -31,7 +31,7 @@ subtle = { workspace = true }
 
 [target.'cfg(not(target_os = "solana"))'.dev-dependencies]
 bitflags = { workspace = true }
-THIS-solana-logger = { workspace = true }
+solana-logger = { workspace = true }
 
 [build-dependencies]
 rustc_version = { workspace = true }

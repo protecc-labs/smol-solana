@@ -28,12 +28,12 @@ semver = { workspace = true }
 serde = { workspace = true }
 serde_derive = { workspace = true }
 serde_json = { workspace = true }
-THIS-solana-account-decoder = { workspace = true }
-THIS-solana-rpc-client-api = { workspace = true }
-THIS-solana-sdk = { workspace = true }
-THIS-solana-transaction-status = { workspace = true }
-THIS-solana-version = { workspace = true }
-THIS-solana-vote-program = { workspace = true }
+solana-account-decoder = { workspace = true }
+solana-rpc-client-api = { workspace = true }
+solana-sdk = { workspace = true }
+solana-transaction-status = { workspace = true }
+solana-version = { workspace = true }
+solana-vote-program = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 
 [dev-dependencies]

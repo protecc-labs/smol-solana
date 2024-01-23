@@ -14,9 +14,9 @@ log = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_derive = { workspace = true }
-THIS-solana-frozen-abi = { workspace = true }
-THIS-solana-frozen-abi-macro = { workspace = true }
-THIS-solana-sdk = { workspace = true }
+solana-frozen-abi = { workspace = true }
+solana-frozen-abi-macro = { workspace = true }
+solana-sdk = { workspace = true }
 
 [features]
 dummy-for-ci-check = []

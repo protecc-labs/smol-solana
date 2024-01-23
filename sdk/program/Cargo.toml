@@ -33,9 +33,9 @@ serde_derive = { workspace = true }
 serde_json = { workspace = true }
 sha2 = { workspace = true }
 sha3 = { workspace = true }
-THIS-solana-frozen-abi = { workspace = true }
-THIS-solana-frozen-abi-macro = { workspace = true }
-THIS-solana-sdk-macro = { workspace = true }
+solana-frozen-abi = { workspace = true }
+solana-frozen-abi-macro = { workspace = true }
+solana-sdk-macro = { workspace = true }
 thiserror = { workspace = true }
 
 # This is currently needed to build on-chain programs reliably.

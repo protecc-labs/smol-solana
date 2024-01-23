@@ -19,8 +19,8 @@ lazy_static = { workspace = true }
 serde = { workspace = true }
 serde_derive = { workspace = true }
 serde_json = { workspace = true }
-THIS-solana-config-program = { workspace = true }
-THIS-solana-sdk = { workspace = true }
+solana-config-program = { workspace = true }
+solana-sdk = { workspace = true }
 spl-token = { workspace = true, features = ["no-entrypoint"] }
 spl-token-2022 = { workspace = true, features = ["no-entrypoint"] }
 spl-token-group-interface = { workspace = true }

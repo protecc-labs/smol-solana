@@ -20,19 +20,19 @@ indicatif = { workspace = true }
 log = { workspace = true }
 quinn = { workspace = true }
 rayon = { workspace = true }
-THIS-solana-connection-cache = { workspace = true }
-THIS-solana-measure = { workspace = true }
-THIS-solana-metrics = { workspace = true }
-THIS-solana-pubsub-client = { workspace = true }
-THIS-solana-quic-client = { workspace = true }
-THIS-solana-rpc-client = { workspace = true, features = ["default"] }
-THIS-solana-rpc-client-api = { workspace = true }
-THIS-solana-rpc-client-nonce-utils = { workspace = true }
-THIS-solana-sdk = { workspace = true }
-THIS-solana-streamer = { workspace = true }
-THIS-solana-thin-client = { workspace = true }
-THIS-solana-tpu-client = { workspace = true, features = ["default"] }
-THIS-solana-udp-client = { workspace = true }
+solana-connection-cache = { workspace = true }
+solana-measure = { workspace = true }
+solana-metrics = { workspace = true }
+solana-pubsub-client = { workspace = true }
+solana-quic-client = { workspace = true }
+solana-rpc-client = { workspace = true, features = ["default"] }
+solana-rpc-client-api = { workspace = true }
+solana-rpc-client-nonce-utils = { workspace = true }
+solana-sdk = { workspace = true }
+solana-streamer = { workspace = true }
+solana-thin-client = { workspace = true }
+solana-tpu-client = { workspace = true, features = ["default"] }
+solana-udp-client = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 

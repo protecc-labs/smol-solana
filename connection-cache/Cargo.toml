@@ -20,13 +20,13 @@ log = { workspace = true }
 rand = { workspace = true }
 rayon = { workspace = true }
 rcgen = { workspace = true }
-THIS-solana-measure = { workspace = true }
-THIS-solana-metrics = { workspace = true }
-THIS-solana-sdk = { workspace = true }
+solana-measure = { workspace = true }
+solana-metrics = { workspace = true }
+solana-sdk = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 
 [dev-dependencies]
 rand_chacha = { workspace = true }
-THIS-solana-logger = { workspace = true }
-THIS-solana-net-utils = { workspace = true }
+solana-logger = { workspace = true }
+solana-net-utils = { workspace = true }

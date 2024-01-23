@@ -22,8 +22,8 @@ log = { workspace = true }
 serde = { workspace = true }
 serde_derive = { workspace = true }
 serde_json = { workspace = true }
-THIS-solana-account-decoder = { workspace = true }
-THIS-solana-sdk = { workspace = true }
+solana-account-decoder = { workspace = true }
+solana-sdk = { workspace = true }
 spl-associated-token-account = { workspace = true, features = [
     "no-entrypoint",
 ] }

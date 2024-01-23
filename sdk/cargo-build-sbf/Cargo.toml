@@ -18,9 +18,9 @@ log = { workspace = true, features = ["std"] }
 regex = { workspace = true }
 reqwest = { workspace = true, features = ["blocking", "rustls-tls"] }
 semver = { workspace = true }
-THIS-solana-download-utils = { workspace = true }
-THIS-solana-logger = { workspace = true }
-THIS-solana-sdk = { workspace = true }
+solana-download-utils = { workspace = true }
+solana-logger = { workspace = true }
+solana-sdk = { workspace = true }
 tar = { workspace = true }
 
 [dev-dependencies]

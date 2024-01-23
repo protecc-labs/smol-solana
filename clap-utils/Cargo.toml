@@ -13,8 +13,8 @@ edition = { workspace = true }
 chrono = { workspace = true, features = ["default"] }
 clap = "2.33.0"
 rpassword = { workspace = true }
-THIS-solana-remote-wallet = { workspace = true }
-THIS-solana-sdk = { workspace = true }
+solana-remote-wallet = { workspace = true }
+solana-sdk = { workspace = true }
 thiserror = { workspace = true }
 tiny-bip39 = { workspace = true }
 uriparse = { workspace = true }

@@ -17,13 +17,13 @@ indexmap = { workspace = true }
 indicatif = { workspace = true, optional = true }
 log = { workspace = true }
 rayon = { workspace = true }
-THIS-solana-connection-cache = { workspace = true }
-THIS-solana-measure = { workspace = true }
-THIS-solana-metrics = { workspace = true }
-THIS-solana-pubsub-client = { workspace = true }
-THIS-solana-rpc-client = { workspace = true }
-THIS-solana-rpc-client-api = { workspace = true }
-THIS-solana-sdk = { workspace = true }
+solana-connection-cache = { workspace = true }
+solana-measure = { workspace = true }
+solana-metrics = { workspace = true }
+solana-pubsub-client = { workspace = true }
+solana-rpc-client = { workspace = true }
+solana-rpc-client-api = { workspace = true }
+solana-sdk = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 

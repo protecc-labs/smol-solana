@@ -25,10 +25,10 @@ semver = { workspace = true }
 serde = { workspace = true }
 serde_derive = { workspace = true }
 serde_json = { workspace = true }
-THIS-solana-account-decoder = { workspace = true }
-THIS-solana-sdk = { workspace = true }
-THIS-solana-transaction-status = { workspace = true }
-THIS-solana-version = { workspace = true }
+solana-account-decoder = { workspace = true }
+solana-sdk = { workspace = true }
+solana-transaction-status = { workspace = true }
+solana-version = { workspace = true }
 spl-token-2022 = { workspace = true, features = ["no-entrypoint"] }
 thiserror = { workspace = true }
 
