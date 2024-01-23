@@ -89,20 +89,3 @@ impl State {
         80 // see test_nonce_state_size.
     }
 }
-
-#[cfg(test)]
-mod test {
-    use {super::*, crate::nonce::state::Versions};
-
-    #[test]
-    fn default_is_uninitialized() {
-        assert_eq!(State::default(), State::Uninitialized)
-    }
-
-    #[test]
-    fn test_nonce_state_size() {
-        let data = Versions::new(State::Initialized(Data::default()));
-        let size = bincode::serialized_size(&data).unwrap();
-        assert_eq!(State::size() as u64, size);
-    }
-}

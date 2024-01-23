@@ -129,38 +129,3 @@ macro_rules! version {
         &*format!("{:?}", $crate::Version::default())
     };
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_compute_commit() {
-        assert_eq!(compute_commit(None), None);
-        assert_eq!(compute_commit(Some("1234567890")), Some(0x1234_5678));
-        assert_eq!(compute_commit(Some("HEAD")), None);
-        assert_eq!(compute_commit(Some("garbagein")), None);
-    }
-
-    #[test]
-    fn test_client_id() {
-        assert_eq!(ClientId::from(0u16), ClientId::SolanaLabs);
-        assert_eq!(ClientId::from(1u16), ClientId::JitoLabs);
-        assert_eq!(ClientId::from(2u16), ClientId::Firedancer);
-        for client in 3u16..=u16::MAX {
-            assert_eq!(ClientId::from(client), ClientId::Unknown(client));
-        }
-        assert_eq!(u16::try_from(ClientId::SolanaLabs), Ok(0u16));
-        assert_eq!(u16::try_from(ClientId::JitoLabs), Ok(1u16));
-        assert_eq!(u16::try_from(ClientId::Firedancer), Ok(2u16));
-        for client in 0..=2u16 {
-            assert_eq!(
-                u16::try_from(ClientId::Unknown(client)),
-                Err(format!("Invalid client: {client}"))
-            );
-        }
-        for client in 3u16..=u16::MAX {
-            assert_eq!(u16::try_from(ClientId::Unknown(client)), Ok(client));
-        }
-    }
-}

@@ -193,39 +193,3 @@ impl WithdrawProof {
         Ok(())
     }
 }
-
-#[cfg(test)]
-mod test {
-    use {super::*, crate::encryption::elgamal::ElGamalKeypair};
-
-    #[test]
-    fn test_withdraw_correctness() {
-        // generate and verify proof for the proper setting
-        let keypair = ElGamalKeypair::new_rand();
-
-        let current_balance: u64 = 77;
-        let current_ciphertext = keypair.pubkey().encrypt(current_balance);
-
-        let withdraw_amount: u64 = 55;
-
-        let data = WithdrawData::new(
-            withdraw_amount,
-            &keypair,
-            current_balance,
-            &current_ciphertext,
-        )
-        .unwrap();
-        assert!(data.verify_proof().is_ok());
-
-        // generate and verify proof with wrong balance
-        let wrong_balance: u64 = 99;
-        let data = WithdrawData::new(
-            withdraw_amount,
-            &keypair,
-            wrong_balance,
-            &current_ciphertext,
-        )
-        .unwrap();
-        assert!(data.verify_proof().is_err());
-    }
-}

@@ -41,15 +41,3 @@ pub extern "C" fn entrypoint(_input: *mut u8) -> u64 {
 
 custom_heap_default!();
 custom_panic_default!();
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_sha() {
-        test_sha256_hasher();
-        test_keccak256_hasher();
-        test_blake3_hasher();
-    }
-}

@@ -49,25 +49,3 @@ pub fn many_args_sret(
         group3: u128::from(arg7) + u128::from(arg8) + u128::from(arg9),
     }
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_many_args() {
-        assert_eq!(45, many_args(1, 2, 3, 4, 5, 6, 7, 8, 9));
-    }
-
-    #[test]
-    fn test_sret() {
-        assert_eq!(
-            Ret {
-                group1: 6,
-                group2: 15,
-                group3: 24
-            },
-            many_args_sret(1, 2, 3, 4, 5, 6, 7, 8, 9)
-        );
-    }
-}

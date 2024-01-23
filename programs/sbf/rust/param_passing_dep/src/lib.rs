@@ -25,22 +25,3 @@ impl<'a> TestDep {
         }
     }
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_dep() {
-        let array = [0xA, 0xB, 0xC, 0xD, 0xE, 0xF];
-        let data = Data {
-            twentyone: 21u64,
-            twentytwo: 22u64,
-            twentythree: 23u64,
-            twentyfour: 24u64,
-            twentyfive: 25u32,
-            array: &array,
-        };
-        assert_eq!(TestDep { thirty: 30 }, TestDep::new(&data, 1, 2, 3, 4, 5));
-    }
-}

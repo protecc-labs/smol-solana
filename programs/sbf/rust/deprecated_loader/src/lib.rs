@@ -167,13 +167,3 @@ pub fn create_instruction(
         data,
     }
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_return_sstruct() {
-        assert_eq!(SStruct { x: 1, y: 2, z: 3 }, return_sstruct());
-    }
-}

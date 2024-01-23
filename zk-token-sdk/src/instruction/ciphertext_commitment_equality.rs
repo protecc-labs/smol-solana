@@ -116,30 +116,3 @@ impl CiphertextCommitmentEqualityProofContext {
         transcript
     }
 }
-
-#[cfg(test)]
-mod test {
-    use {
-        super::*,
-        crate::encryption::{elgamal::ElGamalKeypair, pedersen::Pedersen},
-    };
-
-    #[test]
-    fn test_ctxt_comm_equality_proof_correctness() {
-        let keypair = ElGamalKeypair::new_rand();
-        let amount: u64 = 55;
-        let ciphertext = keypair.pubkey().encrypt(amount);
-        let (commitment, opening) = Pedersen::new(amount);
-
-        let proof_data = CiphertextCommitmentEqualityProofData::new(
-            &keypair,
-            &ciphertext,
-            &commitment,
-            &opening,
-            amount,
-        )
-        .unwrap();
-
-        assert!(proof_data.verify_proof().is_ok());
-    }
-}

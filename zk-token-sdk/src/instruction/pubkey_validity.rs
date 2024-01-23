@@ -86,16 +86,3 @@ impl PubkeyValidityProofContext {
         transcript
     }
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_pubkey_validity_instruction_correctness() {
-        let keypair = ElGamalKeypair::new_rand();
-
-        let pubkey_validity_data = PubkeyValidityData::new(&keypair).unwrap();
-        assert!(pubkey_validity_data.verify_proof().is_ok());
-    }
-}

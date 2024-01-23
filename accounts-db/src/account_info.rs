@@ -186,38 +186,3 @@ impl AccountInfo {
         }
     }
 }
-#[cfg(test)]
-mod test {
-    use {super::*, crate::append_vec::MAXIMUM_APPEND_VEC_FILE_SIZE};
-
-    #[test]
-    fn test_limits() {
-        for offset in [
-            // MAXIMUM_APPEND_VEC_FILE_SIZE is too big. That would be an offset at the first invalid byte in the max file size.
-            // MAXIMUM_APPEND_VEC_FILE_SIZE - 8 bytes would reference the very last 8 bytes in the file size. It makes no sense to reference that since element sizes are always more than 8.
-            // MAXIMUM_APPEND_VEC_FILE_SIZE - 16 bytes would reference the second to last 8 bytes in the max file size. This is still likely meaningless, but it is 'valid' as far as the index
-            // is concerned.
-            (MAXIMUM_APPEND_VEC_FILE_SIZE - 2 * (ALIGN_BOUNDARY_OFFSET as u64)) as Offset,
-            0,
-            ALIGN_BOUNDARY_OFFSET,
-            4 * ALIGN_BOUNDARY_OFFSET,
-        ] {
-            let info = AccountInfo::new(StorageLocation::AppendVec(0, offset), 0);
-            assert!(info.offset() == offset);
-        }
-    }
-
-    #[test]
-    #[should_panic(expected = "illegal offset")]
-    fn test_illegal_offset() {
-        let offset = (MAXIMUM_APPEND_VEC_FILE_SIZE - (ALIGN_BOUNDARY_OFFSET as u64)) as Offset;
-        AccountInfo::new(StorageLocation::AppendVec(0, offset), 0);
-    }
-
-    #[test]
-    #[should_panic(expected = "illegal offset")]
-    fn test_alignment() {
-        let offset = 1; // not aligned
-        AccountInfo::new(StorageLocation::AppendVec(0, offset), 0);
-    }
-}

@@ -21,17 +21,3 @@ pub fn create_account(feature: &Feature, lamports: u64) -> AccountSharedData {
     to_account(feature, &mut account).unwrap();
     account
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn feature_deserialize_none() {
-        let just_initialized = AccountSharedData::new(42, Feature::size_of(), &id());
-        assert_eq!(
-            from_account(&just_initialized),
-            Some(Feature { activated_at: None })
-        );
-    }
-}

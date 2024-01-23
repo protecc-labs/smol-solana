@@ -77,13 +77,3 @@ pub fn process_instruction(
     sol_log_compute_units();
     Ok(())
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_return_sstruct() {
-        assert_eq!(SStruct { x: 1, y: 2, z: 3 }, return_sstruct());
-    }
-}

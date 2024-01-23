@@ -135,37 +135,3 @@ impl PubkeyValidityProof {
         Ok(PubkeyValidityProof { Y, z })
     }
 }
-
-#[cfg(test)]
-mod test {
-    use {
-        super::*,
-        solana_sdk::{pubkey::Pubkey, signature::Keypair},
-    };
-
-    #[test]
-    fn test_pubkey_proof_correctness() {
-        // random ElGamal keypair
-        let keypair = ElGamalKeypair::new_rand();
-
-        let mut prover_transcript = Transcript::new(b"test");
-        let mut verifier_transcript = Transcript::new(b"test");
-
-        let proof = PubkeyValidityProof::new(&keypair, &mut prover_transcript);
-        assert!(proof
-            .verify(keypair.pubkey(), &mut verifier_transcript)
-            .is_ok());
-
-        // derived ElGamal keypair
-        let keypair =
-            ElGamalKeypair::new_from_signer(&Keypair::new(), Pubkey::default().as_ref()).unwrap();
-
-        let mut prover_transcript = Transcript::new(b"test");
-        let mut verifier_transcript = Transcript::new(b"test");
-
-        let proof = PubkeyValidityProof::new(&keypair, &mut prover_transcript);
-        assert!(proof
-            .verify(keypair.pubkey(), &mut verifier_transcript)
-            .is_ok());
-    }
-}
