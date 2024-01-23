@@ -18,9 +18,8 @@ use {
         sigma_proofs::{canonical_scalar_from_optional_slice, ristretto_point_from_optional_slice},
         UNIT_LEN,
     },
+    aes_gcm_siv::aead::OsRng,
     curve25519_dalek::traits::MultiscalarMul,
-    rand::rngs::OsRng,
-    zeroize::Zeroize,
 };
 use {
     crate::{
@@ -33,6 +32,7 @@ use {
         traits::{IsIdentity, VartimeMultiscalarMul},
     },
     merlin::Transcript,
+    zeroize::Zeroize,
 };
 
 /// Byte length of a grouped ciphertext validity proof for 2 handles
@@ -172,7 +172,7 @@ impl GroupedCiphertext2HandlesValidityProof {
                 &self.z_r,           // z_r
                 &self.z_x,           // z_x
                 &(-&c),              // -c
-                &-(&Scalar::one()),  // -identity
+                &-(&Scalar::ONE),    // -identity
                 &(&w * &self.z_r),   // w * z_r
                 &(&w_negated * &c),  // -w * c
                 &w_negated,          // -w

@@ -13,8 +13,8 @@ use {
         sigma_proofs::{canonical_scalar_from_optional_slice, ristretto_point_from_optional_slice},
         UNIT_LEN,
     },
+    aes_gcm_siv::aead::OsRng,
     curve25519_dalek::traits::MultiscalarMul,
-    rand::rngs::OsRng,
     zeroize::Zeroize,
 };
 use {
@@ -136,7 +136,7 @@ impl ZeroBalanceProof {
             vec![
                 &self.z,            // z
                 &(-&c),             // -c
-                &(-&Scalar::one()), // -identity
+                &(-&Scalar::ONE),   // -identity
                 &(&w * &self.z),    // w * z
                 &(&w_negated * &c), // -w * c
                 &w_negated,         // -w

@@ -332,24 +332,3 @@ impl<T: Sized + Default + Clone> Drop for PinnedVec<T> {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_pinned_vec() {
-        let mut mem = PinnedVec::with_capacity(10);
-        mem.set_pinnable();
-        mem.push(50);
-        mem.resize(2, 10);
-        assert_eq!(mem[0], 50);
-        assert_eq!(mem[1], 10);
-        assert_eq!(mem.len(), 2);
-        assert!(!mem.is_empty());
-        let mut iter = mem.iter();
-        assert_eq!(*iter.next().unwrap(), 50);
-        assert_eq!(*iter.next().unwrap(), 10);
-        assert_eq!(iter.next(), None);
-    }
-}

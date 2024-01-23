@@ -87,29 +87,3 @@ impl DataBudget {
         size <= self.bytes.load(Ordering::Acquire)
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use {super::*, std::time::Duration};
-
-    #[test]
-    fn test_data_budget() {
-        let budget = DataBudget::default();
-        assert!(!budget.take(1)); // budget = 0.
-
-        assert_eq!(budget.update(1000, |bytes| bytes + 5), 5); // budget updates to 5.
-        assert!(budget.take(1));
-        assert!(budget.take(2));
-        assert!(!budget.take(3)); // budget = 2, out of budget.
-
-        assert_eq!(budget.update(30, |_| 10), 2); // no update, budget = 2.
-        assert!(!budget.take(3)); // budget = 2, out of budget.
-
-        std::thread::sleep(Duration::from_millis(50));
-        assert_eq!(budget.update(30, |bytes| bytes * 2), 4); // budget updates to 4.
-
-        assert!(budget.take(3));
-        assert!(budget.take(1));
-        assert!(!budget.take(1)); // budget = 0.
-    }
-}

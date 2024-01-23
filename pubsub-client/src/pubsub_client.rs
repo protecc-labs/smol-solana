@@ -853,8 +853,3 @@ impl PubsubClient {
         info!("websocket - exited receive loop");
     }
 }
-
-#[cfg(test)]
-mod tests {
-    // see client-test/test/client.rs
-}

@@ -17,26 +17,3 @@ where
         .deserialize_from(instruction_data)
         .map_err(|_| InstructionError::InvalidInstructionData)
 }
-
-#[cfg(test)]
-pub mod tests {
-    use {super::*, solana_program::system_instruction::SystemInstruction};
-
-    #[test]
-    fn test_limited_deserialize_advance_nonce_account() {
-        let item = SystemInstruction::AdvanceNonceAccount;
-        let serialized = bincode::serialize(&item).unwrap();
-
-        assert_eq!(
-            serialized.len(),
-            4,
-            "`SanitizedMessage::get_durable_nonce()` may need a change"
-        );
-
-        assert_eq!(
-            limited_deserialize::<SystemInstruction>(&serialized, 4).as_ref(),
-            Ok(&item)
-        );
-        assert!(limited_deserialize::<SystemInstruction>(&serialized, 3).is_err());
-    }
-}

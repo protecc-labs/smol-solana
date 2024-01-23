@@ -114,7 +114,7 @@ pub enum QuicServerError {
     #[error("Endpoint creation failed: {0}")]
     EndpointFailed(std::io::Error),
     #[error("Certificate error: {0}")]
-    CertificateError(#[from] rcgen::RcgenError),
+    CertificateError(#[from] rcgen::Error),
     #[error("TLS error: {0}")]
     TlsError(#[from] rustls::Error),
 }

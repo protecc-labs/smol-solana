@@ -13,8 +13,7 @@ use {
         sigma_proofs::{canonical_scalar_from_optional_slice, ristretto_point_from_optional_slice},
         UNIT_LEN,
     },
-    rand::rngs::OsRng,
-    zeroize::Zeroize,
+    aes_gcm_siv::aead::OsRng,
 };
 use {
     crate::{
@@ -27,6 +26,7 @@ use {
         traits::{IsIdentity, VartimeMultiscalarMul},
     },
     merlin::Transcript,
+    zeroize::Zeroize,
 };
 
 /// Byte length of a public key validity proof.
@@ -65,7 +65,7 @@ impl PubkeyValidityProof {
         // extract the relevant scalar and Ristretto points from the input
         let s = elgamal_keypair.secret().get_scalar();
 
-        assert!(s != &Scalar::zero());
+        assert!(s != &Scalar::ZERO);
         let s_inv = s.invert();
 
         // generate a random masking factor that also serves as a nonce
@@ -109,7 +109,7 @@ impl PubkeyValidityProof {
             .ok_or(SigmaProofVerificationError::Deserialization)?;
 
         let check = RistrettoPoint::vartime_multiscalar_mul(
-            vec![&self.z, &(-&c), &(-&Scalar::one())],
+            vec![&self.z, &(-&c), &(-&Scalar::ONE)],
             vec![&(*H), P, &Y],
         );
 

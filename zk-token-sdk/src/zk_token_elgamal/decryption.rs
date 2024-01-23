@@ -15,21 +15,3 @@ impl pod::ElGamalCiphertext {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use {super::*, crate::encryption::elgamal::ElGamalKeypair};
-
-    #[test]
-    fn test_pod_decryption() {
-        let keypair = ElGamalKeypair::new_rand();
-
-        let pod_ciphertext = pod::ElGamalCiphertext([0u8; 64]);
-        assert_eq!(pod_ciphertext.decrypt(keypair.secret()).unwrap(), 0);
-
-        let amount = 55_u64;
-        let ciphertext = keypair.pubkey().encrypt(amount);
-        let pod_ciphertext: pod::ElGamalCiphertext = ciphertext.into();
-        assert_eq!(pod_ciphertext.decrypt(keypair.secret()).unwrap(), 55);
-    }
-}

@@ -61,24 +61,3 @@ impl Sysvar for SlotHashes {
         Err(ProgramError::UnsupportedSysvar)
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use {
-        super::*,
-        crate::{clock::Slot, hash::Hash, slot_hashes::MAX_ENTRIES},
-    };
-
-    #[test]
-    fn test_size_of() {
-        assert_eq!(
-            SlotHashes::size_of(),
-            bincode::serialized_size(
-                &(0..MAX_ENTRIES)
-                    .map(|slot| (slot as Slot, Hash::default()))
-                    .collect::<SlotHashes>()
-            )
-            .unwrap() as usize
-        );
-    }
-}

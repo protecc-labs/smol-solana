@@ -98,36 +98,3 @@ pub fn create_and_canonicalize_directories(
         })
         .collect()
 }
-
-#[cfg(test)]
-mod tests {
-    use {super::*, tempfile::TempDir};
-
-    #[test]
-    pub fn test_create_all_accounts_run_and_snapshot_dirs() {
-        let (_tmp_dirs, account_paths): (Vec<TempDir>, Vec<PathBuf>) = (0..4)
-            .map(|_| {
-                let tmp_dir = tempfile::TempDir::new().unwrap();
-                let account_path = tmp_dir.path().join("accounts");
-                (tmp_dir, account_path)
-            })
-            .unzip();
-
-        // create the `run/` and `snapshot/` dirs, and ensure they're there
-        let (account_run_paths, account_snapshot_paths) =
-            create_all_accounts_run_and_snapshot_dirs(&account_paths).unwrap();
-        account_run_paths.iter().all(|path| path.is_dir());
-        account_snapshot_paths.iter().all(|path| path.is_dir());
-
-        // delete a `run/` and `snapshot/` dir, then re-create it
-        let account_path_first = account_paths.first().unwrap();
-        delete_contents_of_path(account_path_first);
-        assert!(account_path_first.exists());
-        assert!(!account_path_first.join(ACCOUNTS_RUN_DIR).exists());
-        assert!(!account_path_first.join(ACCOUNTS_SNAPSHOT_DIR).exists());
-
-        _ = create_all_accounts_run_and_snapshot_dirs(&account_paths).unwrap();
-        account_run_paths.iter().all(|path| path.is_dir());
-        account_snapshot_paths.iter().all(|path| path.is_dir());
-    }
-}

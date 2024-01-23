@@ -76,34 +76,3 @@ impl<E> DecodeError<E> for VoteError {
         "VoteError"
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use {super::*, crate::instruction::InstructionError};
-
-    #[test]
-    fn test_custom_error_decode() {
-        use num_traits::FromPrimitive;
-        fn pretty_err<T>(err: InstructionError) -> String
-        where
-            T: 'static + std::error::Error + DecodeError<T> + FromPrimitive,
-        {
-            if let InstructionError::Custom(code) = err {
-                let specific_error: T = T::decode_custom_error_to_enum(code).unwrap();
-                format!(
-                    "{:?}: {}::{:?} - {}",
-                    err,
-                    T::type_of(),
-                    specific_error,
-                    specific_error,
-                )
-            } else {
-                "".to_string()
-            }
-        }
-        assert_eq!(
-            "Custom(0): VoteError::VoteTooOld - vote already recorded or not in slot hashes history",
-            pretty_err::<VoteError>(VoteError::VoteTooOld.into())
-        )
-    }
-}

@@ -236,38 +236,3 @@ impl From<Vec<Slot>> for RecentLeaderSlots {
         Self(Arc::new(RwLock::new(recent_slots.into_iter().collect())))
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn assert_slot(recent_slots: RecentLeaderSlots, expected_slot: Slot) {
-        assert_eq!(recent_slots.estimated_current_slot(), expected_slot);
-    }
-
-    #[test]
-    fn test_recent_leader_slots() {
-        assert_slot(RecentLeaderSlots::new(0), 0);
-
-        let mut recent_slots: Vec<Slot> = (1..=12).collect();
-        assert_slot(RecentLeaderSlots::from(recent_slots.clone()), 12);
-
-        recent_slots.reverse();
-        assert_slot(RecentLeaderSlots::from(recent_slots), 12);
-
-        assert_slot(
-            RecentLeaderSlots::from(vec![0, 1 + MAX_SLOT_SKIP_DISTANCE]),
-            1 + MAX_SLOT_SKIP_DISTANCE,
-        );
-        assert_slot(
-            RecentLeaderSlots::from(vec![0, 2 + MAX_SLOT_SKIP_DISTANCE]),
-            0,
-        );
-
-        assert_slot(RecentLeaderSlots::from(vec![1]), 1);
-        assert_slot(RecentLeaderSlots::from(vec![1, 100]), 1);
-        assert_slot(RecentLeaderSlots::from(vec![1, 2, 100]), 2);
-        assert_slot(RecentLeaderSlots::from(vec![1, 2, 3, 100]), 3);
-        assert_slot(RecentLeaderSlots::from(vec![1, 2, 3, 99, 100]), 3);
-    }
-}

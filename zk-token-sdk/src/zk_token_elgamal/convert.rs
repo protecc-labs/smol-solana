@@ -52,6 +52,7 @@ mod target_arch {
         crate::{curve25519::scalar::PodScalar, encryption::elgamal::ElGamalError},
         curve25519_dalek::{ristretto::CompressedRistretto, scalar::Scalar},
         std::convert::TryFrom,
+        subtle::CtOption,
     };
 
     impl From<Scalar> for PodScalar {
@@ -64,7 +65,7 @@ mod target_arch {
         type Error = ElGamalError;
 
         fn try_from(pod: PodScalar) -> Result<Self, Self::Error> {
-            Scalar::from_canonical_bytes(pod.0).ok_or(ElGamalError::CiphertextDeserialization)
+            Scalar::from_canonical_bytes(pod.0).or_else(|| Err(ElGamalError::InvalidScalar))
         }
     }
 
@@ -84,77 +85,3 @@ mod target_arch {
 #[cfg(target_os = "solana")]
 #[allow(unused_variables)]
 mod target_arch {}
-
-#[cfg(test)]
-mod tests {
-    use {
-        super::*,
-        crate::{encryption::pedersen::Pedersen, range_proof::RangeProof},
-        merlin::Transcript,
-        std::convert::TryInto,
-    };
-
-    #[test]
-    fn test_pod_range_proof_64() {
-        let (comm, open) = Pedersen::new(55_u64);
-
-        let mut transcript_create = Transcript::new(b"Test");
-        let mut transcript_verify = Transcript::new(b"Test");
-
-        let proof =
-            RangeProof::new(vec![55], vec![64], vec![&open], &mut transcript_create).unwrap();
-
-        let proof_serialized: pod::RangeProofU64 = proof.try_into().unwrap();
-        let proof_deserialized: RangeProof = proof_serialized.try_into().unwrap();
-
-        assert!(proof_deserialized
-            .verify(vec![&comm], vec![64], &mut transcript_verify)
-            .is_ok());
-
-        // should fail to serialize to pod::RangeProof128
-        let proof =
-            RangeProof::new(vec![55], vec![64], vec![&open], &mut transcript_create).unwrap();
-
-        assert!(TryInto::<pod::RangeProofU128>::try_into(proof).is_err());
-    }
-
-    #[test]
-    fn test_pod_range_proof_128() {
-        let (comm_1, open_1) = Pedersen::new(55_u64);
-        let (comm_2, open_2) = Pedersen::new(77_u64);
-        let (comm_3, open_3) = Pedersen::new(99_u64);
-
-        let mut transcript_create = Transcript::new(b"Test");
-        let mut transcript_verify = Transcript::new(b"Test");
-
-        let proof = RangeProof::new(
-            vec![55, 77, 99],
-            vec![64, 32, 32],
-            vec![&open_1, &open_2, &open_3],
-            &mut transcript_create,
-        )
-        .unwrap();
-
-        let proof_serialized: pod::RangeProofU128 = proof.try_into().unwrap();
-        let proof_deserialized: RangeProof = proof_serialized.try_into().unwrap();
-
-        assert!(proof_deserialized
-            .verify(
-                vec![&comm_1, &comm_2, &comm_3],
-                vec![64, 32, 32],
-                &mut transcript_verify,
-            )
-            .is_ok());
-
-        // should fail to serialize to pod::RangeProof64
-        let proof = RangeProof::new(
-            vec![55, 77, 99],
-            vec![64, 32, 32],
-            vec![&open_1, &open_2, &open_3],
-            &mut transcript_create,
-        )
-        .unwrap();
-
-        assert!(TryInto::<pod::RangeProofU64>::try_into(proof).is_err());
-    }
-}

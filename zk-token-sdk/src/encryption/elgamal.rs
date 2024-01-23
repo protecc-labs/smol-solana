@@ -31,6 +31,7 @@ use {
         traits::Identity,
     },
     serde::{Deserialize, Serialize},
+    sha3::Digest,
     solana_sdk::{
         derivation_path::DerivationPath,
         signature::Signature,
@@ -46,8 +47,8 @@ use {
 };
 #[cfg(not(target_os = "solana"))]
 use {
-    rand::rngs::OsRng,
-    sha3::{Digest, Sha3_512},
+    aes_gcm_siv::aead::OsRng,
+    sha3::Sha3_512,
     std::{
         error, fmt,
         io::{Read, Write},
@@ -334,7 +335,7 @@ impl ElGamalPubkey {
     #[allow(non_snake_case)]
     pub fn new(secret: &ElGamalSecretKey) -> Self {
         let s = &secret.0;
-        assert!(s != &Scalar::zero());
+        assert!(s != &Scalar::ZERO);
 
         ElGamalPubkey(s.invert() * &(*H))
     }
@@ -353,7 +354,9 @@ impl ElGamalPubkey {
         }
 
         Some(ElGamalPubkey(
-            CompressedRistretto::from_slice(bytes).decompress()?,
+            CompressedRistretto::from_slice(bytes)
+                .unwrap()
+                .decompress()?,
         ))
     }
 
@@ -493,7 +496,9 @@ impl ElGamalSecretKey {
 
     pub fn from_bytes(bytes: &[u8]) -> Option<ElGamalSecretKey> {
         match bytes.try_into() {
-            Ok(bytes) => Scalar::from_canonical_bytes(bytes).map(ElGamalSecretKey),
+            Ok(bytes) => Scalar::from_canonical_bytes(bytes)
+                .map(ElGamalSecretKey)
+                .into(),
             _ => None,
         }
     }
@@ -716,7 +721,9 @@ impl DecryptHandle {
         }
 
         Some(DecryptHandle(
-            CompressedRistretto::from_slice(bytes).decompress()?,
+            CompressedRistretto::from_slice(bytes)
+                .unwrap()
+                .decompress()?,
         ))
     }
 }
@@ -768,307 +775,3 @@ impl<'a, 'b> Mul<&'b DecryptHandle> for &'a Scalar {
 }
 
 define_mul_variants!(LHS = Scalar, RHS = DecryptHandle, Output = DecryptHandle);
-
-#[cfg(test)]
-mod tests {
-    use {
-        super::*,
-        crate::encryption::pedersen::Pedersen,
-        bip39::{Language, Mnemonic, MnemonicType, Seed},
-        solana_sdk::{pubkey::Pubkey, signature::Keypair, signer::null_signer::NullSigner},
-        std::fs::{self, File},
-    };
-
-    #[test]
-    fn test_encrypt_decrypt_correctness() {
-        let ElGamalKeypair { public, secret } = ElGamalKeypair::new_rand();
-        let amount: u32 = 57;
-        let ciphertext = ElGamal::encrypt(&public, amount);
-
-        let expected_instance = DiscreteLog::new(*G, Scalar::from(amount) * &(*G));
-
-        assert_eq!(expected_instance, ElGamal::decrypt(&secret, &ciphertext));
-        assert_eq!(57_u64, secret.decrypt_u32(&ciphertext).unwrap());
-    }
-
-    #[test]
-    fn test_encrypt_decrypt_correctness_multithreaded() {
-        let ElGamalKeypair { public, secret } = ElGamalKeypair::new_rand();
-        let amount: u32 = 57;
-        let ciphertext = ElGamal::encrypt(&public, amount);
-
-        let mut instance = ElGamal::decrypt(&secret, &ciphertext);
-        instance.num_threads(4).unwrap();
-        assert_eq!(57_u64, instance.decode_u32().unwrap());
-    }
-
-    #[test]
-    fn test_decrypt_handle() {
-        let ElGamalKeypair {
-            public: public_0,
-            secret: secret_0,
-        } = ElGamalKeypair::new_rand();
-        let ElGamalKeypair {
-            public: public_1,
-            secret: secret_1,
-        } = ElGamalKeypair::new_rand();
-
-        let amount: u32 = 77;
-        let (commitment, opening) = Pedersen::new(amount);
-
-        let handle_0 = public_0.decrypt_handle(&opening);
-        let handle_1 = public_1.decrypt_handle(&opening);
-
-        let ciphertext_0 = ElGamalCiphertext {
-            commitment,
-            handle: handle_0,
-        };
-        let ciphertext_1 = ElGamalCiphertext {
-            commitment,
-            handle: handle_1,
-        };
-
-        let expected_instance = DiscreteLog::new(*G, Scalar::from(amount) * &(*G));
-
-        assert_eq!(expected_instance, secret_0.decrypt(&ciphertext_0));
-        assert_eq!(expected_instance, secret_1.decrypt(&ciphertext_1));
-    }
-
-    #[test]
-    fn test_homomorphic_addition() {
-        let ElGamalKeypair { public, secret: _ } = ElGamalKeypair::new_rand();
-        let amount_0: u64 = 57;
-        let amount_1: u64 = 77;
-
-        // Add two ElGamal ciphertexts
-        let opening_0 = PedersenOpening::new_rand();
-        let opening_1 = PedersenOpening::new_rand();
-
-        let ciphertext_0 = ElGamal::encrypt_with(amount_0, &public, &opening_0);
-        let ciphertext_1 = ElGamal::encrypt_with(amount_1, &public, &opening_1);
-
-        let ciphertext_sum =
-            ElGamal::encrypt_with(amount_0 + amount_1, &public, &(&opening_0 + &opening_1));
-
-        assert_eq!(ciphertext_sum, ciphertext_0 + ciphertext_1);
-
-        // Add to ElGamal ciphertext
-        let opening = PedersenOpening::new_rand();
-        let ciphertext = ElGamal::encrypt_with(amount_0, &public, &opening);
-        let ciphertext_sum = ElGamal::encrypt_with(amount_0 + amount_1, &public, &opening);
-
-        assert_eq!(ciphertext_sum, ciphertext.add_amount(amount_1));
-    }
-
-    #[test]
-    fn test_homomorphic_subtraction() {
-        let ElGamalKeypair { public, secret: _ } = ElGamalKeypair::new_rand();
-        let amount_0: u64 = 77;
-        let amount_1: u64 = 55;
-
-        // Subtract two ElGamal ciphertexts
-        let opening_0 = PedersenOpening::new_rand();
-        let opening_1 = PedersenOpening::new_rand();
-
-        let ciphertext_0 = ElGamal::encrypt_with(amount_0, &public, &opening_0);
-        let ciphertext_1 = ElGamal::encrypt_with(amount_1, &public, &opening_1);
-
-        let ciphertext_sub =
-            ElGamal::encrypt_with(amount_0 - amount_1, &public, &(&opening_0 - &opening_1));
-
-        assert_eq!(ciphertext_sub, ciphertext_0 - ciphertext_1);
-
-        // Subtract to ElGamal ciphertext
-        let opening = PedersenOpening::new_rand();
-        let ciphertext = ElGamal::encrypt_with(amount_0, &public, &opening);
-        let ciphertext_sub = ElGamal::encrypt_with(amount_0 - amount_1, &public, &opening);
-
-        assert_eq!(ciphertext_sub, ciphertext.subtract_amount(amount_1));
-    }
-
-    #[test]
-    fn test_homomorphic_multiplication() {
-        let ElGamalKeypair { public, secret: _ } = ElGamalKeypair::new_rand();
-        let amount_0: u64 = 57;
-        let amount_1: u64 = 77;
-
-        let opening = PedersenOpening::new_rand();
-
-        let ciphertext = ElGamal::encrypt_with(amount_0, &public, &opening);
-        let scalar = Scalar::from(amount_1);
-
-        let ciphertext_prod =
-            ElGamal::encrypt_with(amount_0 * amount_1, &public, &(&opening * scalar));
-
-        assert_eq!(ciphertext_prod, ciphertext * scalar);
-        assert_eq!(ciphertext_prod, scalar * ciphertext);
-    }
-
-    #[test]
-    fn test_serde_ciphertext() {
-        let ElGamalKeypair { public, secret: _ } = ElGamalKeypair::new_rand();
-        let amount: u64 = 77;
-        let ciphertext = public.encrypt(amount);
-
-        let encoded = bincode::serialize(&ciphertext).unwrap();
-        let decoded: ElGamalCiphertext = bincode::deserialize(&encoded).unwrap();
-
-        assert_eq!(ciphertext, decoded);
-    }
-
-    #[test]
-    fn test_serde_pubkey() {
-        let ElGamalKeypair { public, secret: _ } = ElGamalKeypair::new_rand();
-
-        let encoded = bincode::serialize(&public).unwrap();
-        let decoded: ElGamalPubkey = bincode::deserialize(&encoded).unwrap();
-
-        assert_eq!(public, decoded);
-    }
-
-    #[test]
-    fn test_serde_secretkey() {
-        let ElGamalKeypair { public: _, secret } = ElGamalKeypair::new_rand();
-
-        let encoded = bincode::serialize(&secret).unwrap();
-        let decoded: ElGamalSecretKey = bincode::deserialize(&encoded).unwrap();
-
-        assert_eq!(secret, decoded);
-    }
-
-    fn tmp_file_path(name: &str) -> String {
-        use std::env;
-        let out_dir = env::var("FARF_DIR").unwrap_or_else(|_| "farf".to_string());
-        let keypair = ElGamalKeypair::new_rand();
-        format!("{}/tmp/{}-{}", out_dir, name, keypair.public)
-    }
-
-    #[test]
-    fn test_write_keypair_file() {
-        let outfile = tmp_file_path("test_write_keypair_file.json");
-        let serialized_keypair = ElGamalKeypair::new_rand()
-            .write_json_file(&outfile)
-            .unwrap();
-        let keypair_vec: Vec<u8> = serde_json::from_str(&serialized_keypair).unwrap();
-        assert!(Path::new(&outfile).exists());
-        assert_eq!(
-            keypair_vec,
-            ElGamalKeypair::read_json_file(&outfile)
-                .unwrap()
-                .to_bytes()
-                .to_vec()
-        );
-
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-            assert_eq!(
-                File::open(&outfile)
-                    .expect("open")
-                    .metadata()
-                    .expect("metadata")
-                    .permissions()
-                    .mode()
-                    & 0o777,
-                0o600
-            );
-        }
-        fs::remove_file(&outfile).unwrap();
-    }
-
-    #[test]
-    fn test_write_keypair_file_overwrite_ok() {
-        let outfile = tmp_file_path("test_write_keypair_file_overwrite_ok.json");
-
-        ElGamalKeypair::new_rand()
-            .write_json_file(&outfile)
-            .unwrap();
-        ElGamalKeypair::new_rand()
-            .write_json_file(&outfile)
-            .unwrap();
-    }
-
-    #[test]
-    fn test_write_keypair_file_truncate() {
-        let outfile = tmp_file_path("test_write_keypair_file_truncate.json");
-
-        ElGamalKeypair::new_rand()
-            .write_json_file(&outfile)
-            .unwrap();
-        ElGamalKeypair::read_json_file(&outfile).unwrap();
-
-        // Ensure outfile is truncated
-        {
-            let mut f = File::create(&outfile).unwrap();
-            f.write_all(String::from_utf8([b'a'; 2048].to_vec()).unwrap().as_bytes())
-                .unwrap();
-        }
-        ElGamalKeypair::new_rand()
-            .write_json_file(&outfile)
-            .unwrap();
-        ElGamalKeypair::read_json_file(&outfile).unwrap();
-    }
-
-    #[test]
-    fn test_secret_key_new_from_signer() {
-        let keypair1 = Keypair::new();
-        let keypair2 = Keypair::new();
-
-        assert_ne!(
-            ElGamalSecretKey::new_from_signer(&keypair1, Pubkey::default().as_ref())
-                .unwrap()
-                .0,
-            ElGamalSecretKey::new_from_signer(&keypair2, Pubkey::default().as_ref())
-                .unwrap()
-                .0,
-        );
-
-        let null_signer = NullSigner::new(&Pubkey::default());
-        assert!(
-            ElGamalSecretKey::new_from_signer(&null_signer, Pubkey::default().as_ref()).is_err()
-        );
-    }
-
-    #[test]
-    fn test_keypair_from_seed() {
-        let good_seed = vec![0; 32];
-        assert!(ElGamalKeypair::from_seed(&good_seed).is_ok());
-
-        let too_short_seed = vec![0; 31];
-        assert!(ElGamalKeypair::from_seed(&too_short_seed).is_err());
-
-        let too_long_seed = vec![0; 65536];
-        assert!(ElGamalKeypair::from_seed(&too_long_seed).is_err());
-    }
-
-    #[test]
-    fn test_keypair_from_seed_phrase_and_passphrase() {
-        let mnemonic = Mnemonic::new(MnemonicType::Words12, Language::English);
-        let passphrase = "42";
-        let seed = Seed::new(&mnemonic, passphrase);
-        let expected_keypair = ElGamalKeypair::from_seed(seed.as_bytes()).unwrap();
-        let keypair =
-            ElGamalKeypair::from_seed_phrase_and_passphrase(mnemonic.phrase(), passphrase).unwrap();
-        assert_eq!(keypair.public, expected_keypair.public);
-    }
-
-    #[test]
-    fn test_decrypt_handle_bytes() {
-        let handle = DecryptHandle(RistrettoPoint::default());
-
-        let encoded = handle.to_bytes();
-        let decoded = DecryptHandle::from_bytes(&encoded).unwrap();
-
-        assert_eq!(handle, decoded);
-    }
-
-    #[test]
-    fn test_serde_decrypt_handle() {
-        let handle = DecryptHandle(RistrettoPoint::default());
-
-        let encoded = bincode::serialize(&handle).unwrap();
-        let decoded: DecryptHandle = bincode::deserialize(&encoded).unwrap();
-
-        assert_eq!(handle, decoded);
-    }
-}

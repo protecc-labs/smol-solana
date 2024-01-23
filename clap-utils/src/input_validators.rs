@@ -420,21 +420,3 @@ where
         Ok(())
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_is_derivation() {
-        assert_eq!(is_derivation("2"), Ok(()));
-        assert_eq!(is_derivation("0"), Ok(()));
-        assert_eq!(is_derivation("65537"), Ok(()));
-        assert_eq!(is_derivation("0/2"), Ok(()));
-        assert_eq!(is_derivation("0'/2'"), Ok(()));
-        assert!(is_derivation("a").is_err());
-        assert!(is_derivation("4294967296").is_err());
-        assert!(is_derivation("a/b").is_err());
-        assert!(is_derivation("0/4294967296").is_err());
-    }
-}

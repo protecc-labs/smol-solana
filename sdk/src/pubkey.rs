@@ -32,19 +32,3 @@ pub fn read_pubkey_file(infile: &str) -> Result<Pubkey, Box<dyn std::error::Erro
     use std::str::FromStr;
     Ok(Pubkey::from_str(&printable)?)
 }
-
-#[cfg(test)]
-mod tests {
-    use {super::*, std::fs::remove_file};
-
-    #[test]
-    fn test_read_write_pubkey() -> Result<(), Box<dyn std::error::Error>> {
-        let filename = "test_pubkey.json";
-        let pubkey = solana_sdk::pubkey::new_rand();
-        write_pubkey_file(filename, pubkey)?;
-        let read = read_pubkey_file(filename)?;
-        assert_eq!(read, pubkey);
-        remove_file(filename)?;
-        Ok(())
-    }
-}

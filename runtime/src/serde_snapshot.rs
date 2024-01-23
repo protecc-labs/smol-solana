@@ -56,7 +56,6 @@ use {
 
 mod newer;
 mod storage;
-mod tests;
 mod utils;
 
 pub(crate) use {

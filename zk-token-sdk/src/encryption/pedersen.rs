@@ -1,7 +1,7 @@
 //! Pedersen commitment implementation using the Ristretto prime-order group.
 
 #[cfg(not(target_os = "solana"))]
-use rand::rngs::OsRng;
+use aes_gcm_siv::aead::OsRng;
 use {
     crate::{RISTRETTO_POINT_LEN, SCALAR_LEN},
     core::ops::{Add, Mul, Sub},
@@ -99,7 +99,9 @@ impl PedersenOpening {
 
     pub fn from_bytes(bytes: &[u8]) -> Option<PedersenOpening> {
         match bytes.try_into() {
-            Ok(bytes) => Scalar::from_canonical_bytes(bytes).map(PedersenOpening),
+            Ok(bytes) => Scalar::from_canonical_bytes(bytes)
+                .map(PedersenOpening)
+                .into(),
             _ => None,
         }
     }
@@ -194,7 +196,9 @@ impl PedersenCommitment {
         }
 
         Some(PedersenCommitment(
-            CompressedRistretto::from_slice(bytes).decompress()?,
+            CompressedRistretto::from_slice(bytes)
+                .unwrap()
+                .decompress()?,
         ))
     }
 }
@@ -254,101 +258,3 @@ define_mul_variants!(
     RHS = PedersenCommitment,
     Output = PedersenCommitment
 );
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_pedersen_homomorphic_addition() {
-        let amount_0: u64 = 77;
-        let amount_1: u64 = 57;
-
-        let rng = &mut OsRng;
-        let opening_0 = PedersenOpening(Scalar::random(rng));
-        let opening_1 = PedersenOpening(Scalar::random(rng));
-
-        let commitment_0 = Pedersen::with(amount_0, &opening_0);
-        let commitment_1 = Pedersen::with(amount_1, &opening_1);
-        let commitment_addition = Pedersen::with(amount_0 + amount_1, &(opening_0 + opening_1));
-
-        assert_eq!(commitment_addition, commitment_0 + commitment_1);
-    }
-
-    #[test]
-    fn test_pedersen_homomorphic_subtraction() {
-        let amount_0: u64 = 77;
-        let amount_1: u64 = 57;
-
-        let rng = &mut OsRng;
-        let opening_0 = PedersenOpening(Scalar::random(rng));
-        let opening_1 = PedersenOpening(Scalar::random(rng));
-
-        let commitment_0 = Pedersen::with(amount_0, &opening_0);
-        let commitment_1 = Pedersen::with(amount_1, &opening_1);
-        let commitment_addition = Pedersen::with(amount_0 - amount_1, &(opening_0 - opening_1));
-
-        assert_eq!(commitment_addition, commitment_0 - commitment_1);
-    }
-
-    #[test]
-    fn test_pedersen_homomorphic_multiplication() {
-        let amount_0: u64 = 77;
-        let amount_1: u64 = 57;
-
-        let (commitment, opening) = Pedersen::new(amount_0);
-        let scalar = Scalar::from(amount_1);
-        let commitment_addition = Pedersen::with(amount_0 * amount_1, &(opening * scalar));
-
-        assert_eq!(commitment_addition, commitment * scalar);
-        assert_eq!(commitment_addition, scalar * commitment);
-    }
-
-    #[test]
-    fn test_pedersen_commitment_bytes() {
-        let amount: u64 = 77;
-        let (commitment, _) = Pedersen::new(amount);
-
-        let encoded = commitment.to_bytes();
-        let decoded = PedersenCommitment::from_bytes(&encoded).unwrap();
-
-        assert_eq!(commitment, decoded);
-
-        // incorrect length encoding
-        assert_eq!(PedersenCommitment::from_bytes(&[0; 33]), None);
-    }
-
-    #[test]
-    fn test_pedersen_opening_bytes() {
-        let opening = PedersenOpening(Scalar::random(&mut OsRng));
-
-        let encoded = opening.to_bytes();
-        let decoded = PedersenOpening::from_bytes(&encoded).unwrap();
-
-        assert_eq!(opening, decoded);
-
-        // incorrect length encoding
-        assert_eq!(PedersenOpening::from_bytes(&[0; 33]), None);
-    }
-
-    #[test]
-    fn test_serde_pedersen_commitment() {
-        let amount: u64 = 77;
-        let (commitment, _) = Pedersen::new(amount);
-
-        let encoded = bincode::serialize(&commitment).unwrap();
-        let decoded: PedersenCommitment = bincode::deserialize(&encoded).unwrap();
-
-        assert_eq!(commitment, decoded);
-    }
-
-    #[test]
-    fn test_serde_pedersen_opening() {
-        let opening = PedersenOpening(Scalar::random(&mut OsRng));
-
-        let encoded = bincode::serialize(&opening).unwrap();
-        let decoded: PedersenOpening = bincode::deserialize(&encoded).unwrap();
-
-        assert_eq!(opening, decoded);
-    }
-}

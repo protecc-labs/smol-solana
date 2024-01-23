@@ -1,10 +1,10 @@
 use {
     crate::range_proof::errors::RangeProofGeneratorError,
-    curve25519_dalek::{
+    curve25519_dalek::ristretto::RistrettoPoint,
+    sha3::{
         digest::{ExtendableOutput, Update, XofReader},
-        ristretto::RistrettoPoint,
+        Sha3XofReader, Shake256,
     },
-    sha3::{Sha3XofReader, Shake256},
 };
 
 #[cfg(not(target_os = "solana"))]

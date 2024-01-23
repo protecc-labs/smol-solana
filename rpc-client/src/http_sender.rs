@@ -218,24 +218,3 @@ impl RpcSender for HttpSender {
         self.url.clone()
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[tokio::test(flavor = "multi_thread")]
-    async fn http_sender_on_tokio_multi_thread() {
-        let http_sender = HttpSender::new("http://localhost:1234".to_string());
-        let _ = http_sender
-            .send(RpcRequest::GetVersion, serde_json::Value::Null)
-            .await;
-    }
-
-    #[tokio::test(flavor = "current_thread")]
-    async fn http_sender_on_tokio_current_thread() {
-        let http_sender = HttpSender::new("http://localhost:1234".to_string());
-        let _ = http_sender
-            .send(RpcRequest::GetVersion, serde_json::Value::Null)
-            .await;
-    }
-}

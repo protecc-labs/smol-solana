@@ -17,7 +17,7 @@ use {
         sigma_proofs::{canonical_scalar_from_optional_slice, ristretto_point_from_optional_slice},
         UNIT_LEN,
     },
-    rand::rngs::OsRng,
+    aes_gcm_siv::aead::OsRng,
 };
 use {
     crate::{
@@ -358,7 +358,7 @@ impl FeeSigmaProof {
                 c_max_proof,
                 -c_max_proof * m,
                 -z_max,
-                Scalar::one(),
+                Scalar::ONE,
                 w * z_x,
                 w * z_delta_real,
                 -w * c_equality,

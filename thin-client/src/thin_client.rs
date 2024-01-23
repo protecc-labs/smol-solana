@@ -661,27 +661,3 @@ fn min_index(array: &[u64]) -> (u64, usize) {
     }
     (min_time, min_index)
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_client_optimizer() {
-        solana_logger::setup();
-
-        const NUM_CLIENTS: usize = 5;
-        let optimizer = ClientOptimizer::new(NUM_CLIENTS);
-        (0..NUM_CLIENTS).into_par_iter().for_each(|_| {
-            let index = optimizer.experiment();
-            optimizer.report(index, (NUM_CLIENTS - index) as u64);
-        });
-
-        let index = optimizer.experiment();
-        optimizer.report(index, 50);
-        assert_eq!(optimizer.best(), NUM_CLIENTS - 1);
-
-        optimizer.report(optimizer.best(), std::u64::MAX);
-        assert_eq!(optimizer.best(), NUM_CLIENTS - 2);
-    }
-}

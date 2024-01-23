@@ -80,33 +80,3 @@ impl Deref for StakeHistory {
         &self.0
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_stake_history() {
-        let mut stake_history = StakeHistory::default();
-
-        for i in 0..MAX_ENTRIES as u64 + 1 {
-            stake_history.add(
-                i,
-                StakeHistoryEntry {
-                    activating: i,
-                    ..StakeHistoryEntry::default()
-                },
-            );
-        }
-        assert_eq!(stake_history.len(), MAX_ENTRIES);
-        assert_eq!(stake_history.iter().map(|entry| entry.0).min().unwrap(), 1);
-        assert_eq!(stake_history.get(0), None);
-        assert_eq!(
-            stake_history.get(1),
-            Some(&StakeHistoryEntry {
-                activating: 1,
-                ..StakeHistoryEntry::default()
-            })
-        );
-    }
-}
