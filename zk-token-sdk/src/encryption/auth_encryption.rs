@@ -4,10 +4,7 @@
 //! token-2022 where the plaintext is always `u64`.
 #[cfg(not(target_os = "solana"))]
 use {
-    aes_gcm_siv::{
-        aead::{Aead, NewAead},
-        Aes128GcmSiv,
-    },
+    aes_gcm_siv::{aead::Aead, Aes128GcmSiv},
     rand::{rngs::OsRng, Rng},
     thiserror::Error,
 };
@@ -70,6 +67,8 @@ impl AuthenticatedEncryption {
     /// corresponding authenticated encryption ciphertext.
     #[cfg(not(target_os = "solana"))]
     fn encrypt(key: &AeKey, balance: u64) -> AeCiphertext {
+        use aes_gcm_siv::KeyInit;
+
         let mut plaintext = balance.to_le_bytes();
         let nonce: Nonce = OsRng.gen::<[u8; NONCE_LEN]>();
 
@@ -90,6 +89,8 @@ impl AuthenticatedEncryption {
     /// originally encrypted amount.
     #[cfg(not(target_os = "solana"))]
     fn decrypt(key: &AeKey, ciphertext: &AeCiphertext) -> Option<u64> {
+        use aes_gcm_siv::KeyInit;
+
         let plaintext = Aes128GcmSiv::new(&key.0.into())
             .decrypt(&ciphertext.nonce.into(), ciphertext.ciphertext.as_ref());
 
