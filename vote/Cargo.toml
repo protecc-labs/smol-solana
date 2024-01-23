@@ -15,10 +15,10 @@ itertools = { workspace = true }
 log = { workspace = true }
 serde = { workspace = true, features = ["rc"] }
 serde_derive = { workspace = true }
-solana-frozen-abi = { workspace = true }
-solana-frozen-abi-macro = { workspace = true }
-solana-sdk = { workspace = true }
-solana-vote-program = { workspace = true }
+THIS-solana-frozen-abi = { workspace = true }
+THIS-solana-frozen-abi-macro = { workspace = true }
+THIS-solana-sdk = { workspace = true }
+THIS-solana-vote-program = { workspace = true }
 thiserror = { workspace = true }
 
 [lib]

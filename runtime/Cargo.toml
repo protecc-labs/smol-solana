@@ -49,29 +49,29 @@ serde = { workspace = true, features = ["rc"] }
 serde_derive = { workspace = true }
 serde_json = { workspace = true }
 siphasher = { workspace = true }
-solana-accounts-db = { workspace = true }
-solana-address-lookup-table-program = { workspace = true }
-solana-bpf-loader-program = { workspace = true }
-solana-bucket-map = { workspace = true }
-solana-compute-budget-program = { workspace = true }
-solana-config-program = { workspace = true }
-solana-cost-model = { workspace = true }
-solana-frozen-abi = { workspace = true }
-solana-frozen-abi-macro = { workspace = true }
-solana-loader-v4-program = { workspace = true }
-solana-measure = { workspace = true }
-solana-metrics = { workspace = true }
-solana-perf = { workspace = true }
-solana-program-runtime = { workspace = true }
-solana-rayon-threadlimit = { workspace = true }
-solana-sdk = { workspace = true }
-solana-stake-program = { workspace = true }
-solana-system-program = { workspace = true }
-solana-version = { workspace = true }
-solana-vote = { workspace = true }
-solana-vote-program = { workspace = true }
-solana-zk-token-proof-program = { workspace = true }
-solana-zk-token-sdk = { workspace = true }
+THIS-solana-accounts-db = { workspace = true }
+THIS-solana-address-lookup-table-program = { workspace = true }
+THIS-solana-bpf-loader-program = { workspace = true }
+THIS-solana-bucket-map = { workspace = true }
+THIS-solana-compute-budget-program = { workspace = true }
+THIS-solana-config-program = { workspace = true }
+THIS-solana-cost-model = { workspace = true }
+THIS-solana-frozen-abi = { workspace = true }
+THIS-solana-frozen-abi-macro = { workspace = true }
+THIS-solana-loader-v4-program = { workspace = true }
+THIS-solana-measure = { workspace = true }
+THIS-solana-metrics = { workspace = true }
+THIS-solana-perf = { workspace = true }
+THIS-solana-program-runtime = { workspace = true }
+THIS-solana-rayon-threadlimit = { workspace = true }
+THIS-solana-sdk = { workspace = true }
+THIS-solana-stake-program = { workspace = true }
+THIS-solana-system-program = { workspace = true }
+THIS-solana-version = { workspace = true }
+THIS-solana-vote = { workspace = true }
+THIS-solana-vote-program = { workspace = true }
+THIS-solana-zk-token-proof-program = { workspace = true }
+THIS-solana-zk-token-sdk = { workspace = true }
 static_assertions = { workspace = true }
 strum = { workspace = true, features = ["derive"] }
 strum_macros = { workspace = true }
@@ -91,11 +91,13 @@ ed25519-dalek = { workspace = true }
 libsecp256k1 = { workspace = true }
 memoffset = { workspace = true }
 rand_chacha = { workspace = true }
-solana-accounts-db = { workspace = true, features = ["dev-context-only-utils"] }
-solana-logger = { workspace = true }
+THIS-solana-accounts-db = { workspace = true, features = [
+    "dev-context-only-utils",
+] }
+THIS-solana-logger = { workspace = true }
 # See order-crates-for-publishing.py for using this unusual `path = "."`
-solana-runtime = { path = ".", features = ["dev-context-only-utils"] }
-solana-sdk = { workspace = true, features = ["dev-context-only-utils"] }
+THIS-solana-runtime = { path = ".", features = ["dev-context-only-utils"] }
+THIS-solana-sdk = { workspace = true, features = ["dev-context-only-utils"] }
 static_assertions = { workspace = true }
 test-case = { workspace = true }
 

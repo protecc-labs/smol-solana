@@ -11,9 +11,9 @@ edition = { workspace = true }
 
 [dependencies]
 async-trait = { workspace = true }
-solana-connection-cache = { workspace = true }
-solana-net-utils = { workspace = true }
-solana-sdk = { workspace = true }
-solana-streamer = { workspace = true }
+THIS-solana-connection-cache = { workspace = true }
+THIS-solana-net-utils = { workspace = true }
+THIS-solana-sdk = { workspace = true }
+THIS-solana-streamer = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["full"] }

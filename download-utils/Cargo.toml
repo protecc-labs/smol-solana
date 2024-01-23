@@ -13,12 +13,21 @@ edition = { workspace = true }
 console = { workspace = true }
 indicatif = { workspace = true }
 log = { workspace = true }
-reqwest = { workspace = true, features = ["blocking", "brotli", "deflate", "gzip", "rustls-tls", "json"] }
-solana-runtime = { workspace = true }
-solana-sdk = { workspace = true }
+reqwest = { workspace = true, features = [
+    "blocking",
+    "brotli",
+    "deflate",
+    "gzip",
+    "rustls-tls",
+    "json",
+] }
+THIS-solana-runtime = { workspace = true }
+THIS-solana-sdk = { workspace = true }
 
 [dev-dependencies]
-solana-runtime = { workspace = true, features = ["dev-context-only-utils"] }
+THIS-solana-runtime = { workspace = true, features = [
+    "dev-context-only-utils",
+] }
 
 [lib]
 crate-type = ["lib"]

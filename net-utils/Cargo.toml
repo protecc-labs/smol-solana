@@ -19,9 +19,9 @@ rand = { workspace = true }
 serde = { workspace = true }
 serde_derive = { workspace = true }
 socket2 = { workspace = true }
-solana-logger = { workspace = true }
-solana-sdk = { workspace = true }
-solana-version = { workspace = true }
+THIS-solana-logger = { workspace = true }
+THIS-solana-sdk = { workspace = true }
+THIS-solana-version = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 url = { workspace = true }
 

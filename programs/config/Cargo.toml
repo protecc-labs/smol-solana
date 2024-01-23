@@ -14,11 +14,11 @@ bincode = { workspace = true }
 chrono = { workspace = true, features = ["default", "serde"] }
 serde = { workspace = true }
 serde_derive = { workspace = true }
-solana-program-runtime = { workspace = true }
-solana-sdk = { workspace = true }
+THIS-solana-program-runtime = { workspace = true }
+THIS-solana-sdk = { workspace = true }
 
 [dev-dependencies]
-solana-logger = { workspace = true }
+THIS-solana-logger = { workspace = true }
 
 [lib]
 crate-type = ["lib"]

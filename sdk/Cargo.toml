@@ -17,23 +17,23 @@ edition = { workspace = true }
 program = []
 
 default = [
-  "full" # functionality that is not compatible or needed for on-chain programs
+  "full", # functionality that is not compatible or needed for on-chain programs
 ]
 full = [
-    "assert_matches",
-    "byteorder",
-    "chrono",
-    "generic-array",
-    "memmap2",
-    "rand",
-    "rand0-7",
-    "serde_json",
-    "ed25519-dalek",
-    "ed25519-dalek-bip32",
-    "solana-logger",
-    "libsecp256k1",
-    "sha3",
-    "digest",
+  "assert_matches",
+  "byteorder",
+  "chrono",
+  "generic-array",
+  "memmap2",
+  "rand",
+  "rand0-7",
+  "serde_json",
+  "ed25519-dalek",
+  "ed25519-dalek-bip32",
+  "solana-logger",
+  "libsecp256k1",
+  "sha3",
+  "digest",
 ]
 dev-context-only-utils = []
 
@@ -52,9 +52,12 @@ derivation-path = { workspace = true }
 digest = { workspace = true, optional = true }
 ed25519-dalek = { workspace = true, optional = true }
 ed25519-dalek-bip32 = { workspace = true, optional = true }
-generic-array = { workspace = true, features = ["serde", "more_lengths"], optional = true }
+generic-array = { workspace = true, features = [
+  "serde",
+  "more_lengths",
+], optional = true }
 hmac = { workspace = true }
-itertools =  { workspace = true }
+itertools = { workspace = true }
 lazy_static = { workspace = true }
 libsecp256k1 = { workspace = true, optional = true }
 log = { workspace = true }
@@ -75,11 +78,11 @@ serde_json = { workspace = true, optional = true }
 serde_with = { workspace = true, features = ["macros"] }
 sha2 = { workspace = true }
 sha3 = { workspace = true, optional = true }
-solana-frozen-abi = { workspace = true }
-solana-frozen-abi-macro = { workspace = true }
-solana-logger = { workspace = true, optional = true }
-solana-program = { workspace = true }
-solana-sdk-macro = { workspace = true }
+THIS-solana-frozen-abi = { workspace = true }
+THIS-solana-frozen-abi-macro = { workspace = true }
+THIS-solana-logger = { workspace = true, optional = true }
+THIS-solana-program = { workspace = true }
+THIS-solana-sdk-macro = { workspace = true }
 thiserror = { workspace = true }
 uriparse = { workspace = true }
 wasm-bindgen = { workspace = true }

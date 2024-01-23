@@ -21,16 +21,16 @@ quinn-proto = { workspace = true }
 rcgen = { workspace = true }
 rustls = { workspace = true, features = ["dangerous_configuration"] }
 solana-connection-cache = { workspace = true }
-solana-measure = { workspace = true }
-solana-metrics = { workspace = true }
-solana-net-utils = { workspace = true }
-solana-rpc-client-api = { workspace = true }
-solana-sdk = { workspace = true }
-solana-streamer = { workspace = true }
+THIS-solana-measure = { workspace = true }
+THIS-solana-metrics = { workspace = true }
+THIS-solana-net-utils = { workspace = true }
+THIS-solana-rpc-client-api = { workspace = true }
+THIS-solana-sdk = { workspace = true }
+THIS-solana-streamer = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 
 [dev-dependencies]
 crossbeam-channel = { workspace = true }
-solana-logger = { workspace = true }
-solana-perf = { workspace = true }
+THIS-solana-logger = { workspace = true }
+THIS-solana-perf = { workspace = true }

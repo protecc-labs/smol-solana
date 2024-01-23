@@ -14,8 +14,15 @@ crossbeam-channel = { workspace = true }
 gethostname = { workspace = true }
 lazy_static = { workspace = true }
 log = { workspace = true }
-reqwest = { workspace = true, features = ["blocking", "brotli", "deflate", "gzip", "rustls-tls", "json"] }
-solana-sdk = { workspace = true }
+reqwest = { workspace = true, features = [
+    "blocking",
+    "brotli",
+    "deflate",
+    "gzip",
+    "rustls-tls",
+    "json",
+] }
+THIS-solana-sdk = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]

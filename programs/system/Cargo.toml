@@ -14,12 +14,12 @@ bincode = { workspace = true }
 log = { workspace = true }
 serde = { workspace = true }
 serde_derive = { workspace = true }
-solana-program-runtime = { workspace = true }
-solana-sdk = { workspace = true }
+THIS-solana-program-runtime = { workspace = true }
+THIS-solana-sdk = { workspace = true }
 
 [dev-dependencies]
 assert_matches = { workspace = true }
-solana-logger = { workspace = true }
+THIS-solana-logger = { workspace = true }
 
 [lib]
 crate-type = ["lib"]
