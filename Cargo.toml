@@ -297,14 +297,14 @@ solana-vote-program = { path = "programs/vote", version = "=1.18.0" }
 solana-zk-token-proof-program = { path = "programs/zk-token-proof", version = "=1.18.0" }
 solana-zk-token-sdk = { path = "zk-token-sdk", version = "=1.18.0" }
 solana_rbpf = "=0.8.0"
-spl-associated-token-account = "=2.3.0"
-spl-instruction-padding = "0.1"
-spl-memo = "=4.0.0"
-spl-pod = "=0.1.0"
-spl-token = "=4.0.0"
-spl-token-2022 = "=1.0.0"
-spl-token-group-interface = "=0.1.0"
-spl-token-metadata-interface = "=0.2.0"
+spl-associated-token-account = { git = "https://github.com/protecc-labs/smol-solana-program-library.git" } # DONE
+spl-instruction-padding = { git = "https://github.com/protecc-labs/smol-solana-program-library.git" } # DONE
+spl-memo = { git = "https://github.com/protecc-labs/smol-solana-program-library.git" } # DONE
+spl-pod = { git = "https://github.com/protecc-labs/smol-solana-program-library.git" } # libraries/pod DONE
+spl-token = { git = "https://github.com/protecc-labs/smol-solana-program-library.git" } # token/program DONE
+spl-token-2022 = { git = "https://github.com/protecc-labs/smol-solana-program-library.git" } # token/program-2022 DONE
+spl-token-group-interface = { git = "https://github.com/protecc-labs/smol-solana-program-library.git" } # DONE
+spl-token-metadata-interface = { git = "https://github.com/protecc-labs/smol-solana-program-library.git" } # DONE
 static_assertions = "1.1.0"
 stream-cancel = "0.8.2"
 strum = "0.24"
@@ -342,7 +342,6 @@ x509-parser = "0.14.0"
 zeroize = { version = "1.7.0", default-features = false }
 zstd = "0.11.2"
 
-[patch.crates-io]
 # We include the following crates as our dependencies above from crates.io:
 #
 #  * spl-associated-token-account
@@ -375,8 +374,39 @@ zstd = "0.11.2"
 #
 # There is a similar override in `programs/sbf/Cargo.toml`.  Please keep both
 # comments and the overrides in sync.
-solana-program = { path = "sdk/program" }
-solana-zk-token-sdk = { path = "zk-token-sdk" }
+# Patch this local paths
+# [patch.crates-io.spl-associated-token-account]
+# solana-program = { path = "sdk/program" }
+# solana-zk-token-sdk = { path = "zk-token-sdk" }
+
+# [patch.crates-io.spl-instruction-padding]
+# solana-program = { path = "sdk/program" }
+# solana-zk-token-sdk = { path = "zk-token-sdk" }
+
+# [patch.crates-io.spl-memo]
+# solana-program = { path = "sdk/program" }
+# solana-zk-token-sdk = { path = "zk-token-sdk" }
+
+# [patch.crates-io.spl-pod]
+# solana-program = { path = "sdk/program" }
+# solana-zk-token-sdk = { path = "zk-token-sdk" }
+
+# [patch.crates-io.spl-token]
+# solana-program = { path = "sdk/program" }
+# solana-zk-token-sdk = { path = "zk-token-sdk" }
+
+# [patch.crates-io.spl-token-2022]
+# solana-program = { path = "sdk/program" }
+# solana-zk-token-sdk = { path = "zk-token-sdk" }
+
+# [patch.crates-io.spl-token-metadata-interface]
+# solana-program = { path = "sdk/program" }
+# solana-zk-token-sdk = { path = "zk-token-sdk" }
+
+# [patch.crates-io.spl-token-group-interface]
+# solana-program = { path = "sdk/program" }
+# solana-zk-token-sdk = { path = "zk-token-sdk" }
+
 #
 # === zeroize versioning issues ===
 #
