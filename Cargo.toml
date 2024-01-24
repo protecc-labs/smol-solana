@@ -132,8 +132,8 @@ dir-diff = "0.3.3"
 dirs-next = "2.0.0"
 dlopen2 = "0.5.0"
 eager = "0.1.0"
-ed25519-dalek = "=1.0.1"
-ed25519-dalek-bip32 = "0.2.0"
+ed25519-dalek = { version = "2.1.0", features = ["digest"] }
+ed25519-dalek-bip32 = "0.3.0"
 either = "1.9.0"
 enum-iterator = "1.5.0"
 env_logger = "0.9.3"
@@ -229,7 +229,7 @@ reqwest = { version = "0.11.23", default-features = false }
 rolling-file = "0.2.0"
 rpassword = "7.3"
 rustc_version = "0.4"
-rustls = { version = "0.21.2", default-features = false, features = ["quic"] }
+rustls = { version = "0.21.0", default-features = false }
 rustversion = "1.0.14"
 scopeguard = "1.2.0"
 semver = "1.0.21"

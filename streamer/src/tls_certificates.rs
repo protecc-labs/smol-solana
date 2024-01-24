@@ -23,7 +23,7 @@ pub fn new_self_signed_tls_certificate(
     const ED25519_IDENTIFIER: [u32; 4] = [1, 3, 101, 112];
     let mut private_key = Vec::<u8>::with_capacity(34);
     private_key.extend_from_slice(&[0x04, 0x20]); // ASN.1 OCTET STRING
-    private_key.extend_from_slice(keypair.secret().as_bytes());
+    private_key.extend_from_slice(keypair.secret());
     let key_pkcs8 = pkcs8::PrivateKeyInfo {
         algorithm: AlgorithmIdentifier {
             oid: ObjectIdentifier::from_arcs(&ED25519_IDENTIFIER).expect("Failed to convert OID"),

@@ -7,7 +7,7 @@
 use {
     crate::{feature_set::FeatureSet, instruction::Instruction, precompiles::PrecompileError},
     bytemuck::{bytes_of, Pod, Zeroable},
-    ed25519_dalek::{ed25519::signature::Signature, Signer, Verifier},
+    ed25519_dalek::{ed25519::Signature, Signer, Verifier},
 };
 
 pub const PUBKEY_SERIALIZED_SIZE: usize = 32;
@@ -29,9 +29,9 @@ pub struct Ed25519SignatureOffsets {
     message_instruction_index: u16,    // index of instruction data to get message data
 }
 
-pub fn new_ed25519_instruction(keypair: &ed25519_dalek::Keypair, message: &[u8]) -> Instruction {
+pub fn new_ed25519_instruction(keypair: &ed25519_dalek::SigningKey, message: &[u8]) -> Instruction {
     let signature = keypair.sign(message).to_bytes();
-    let pubkey = keypair.public.to_bytes();
+    let pubkey = keypair.to_bytes();
 
     assert_eq!(pubkey.len(), PUBKEY_SERIALIZED_SIZE);
     assert_eq!(signature.len(), SIGNATURE_SERIALIZED_SIZE);
@@ -120,8 +120,11 @@ pub fn verify(
             SIGNATURE_SERIALIZED_SIZE,
         )?;
 
-        let signature =
-            Signature::from_bytes(signature).map_err(|_| PrecompileError::InvalidSignature)?;
+        let signature: &[u8; 64] = signature
+            .try_into()
+            .map_err(|_| ed25519_dalek::SignatureError::new())
+            .unwrap();
+        let signature = Signature::from_bytes(signature);
 
         // Parse out pubkey
         let pubkey = get_data_slice(
@@ -131,8 +134,12 @@ pub fn verify(
             offsets.public_key_offset,
             PUBKEY_SERIALIZED_SIZE,
         )?;
+        let pubkey: &[u8; 32] = pubkey
+            .try_into()
+            .map_err(|_| ed25519_dalek::SignatureError::new())
+            .unwrap();
 
-        let publickey = ed25519_dalek::PublicKey::from_bytes(pubkey)
+        let publickey = ed25519_dalek::VerifyingKey::from_bytes(pubkey)
             .map_err(|_| PrecompileError::InvalidPublicKey)?;
 
         // Parse out message
