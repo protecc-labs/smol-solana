@@ -411,10 +411,17 @@ impl InnerProductProof {
         }
 
         let pos = 2 * lg_n * 32;
-        let a = Scalar::from_canonical_bytes(util::read32(&slice[pos..]))
-            .ok_or(RangeProofVerificationError::Deserialization)?;
-        let b = Scalar::from_canonical_bytes(util::read32(&slice[pos + 32..]))
-            .ok_or(RangeProofVerificationError::Deserialization)?;
+        let a = Scalar::from_canonical_bytes(util::read32(&slice[pos..])).into();
+        let a = match a {
+            Some(a) => a,
+            None => return Err(RangeProofVerificationError::Deserialization),
+        };
+
+        let b = Scalar::from_canonical_bytes(util::read32(&slice[pos + 32..])).into();
+        let b = match b {
+            Some(b) => b,
+            None => return Err(RangeProofVerificationError::Deserialization),
+        };
 
         Ok(InnerProductProof { L_vec, R_vec, a, b })
     }

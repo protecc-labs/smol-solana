@@ -34,7 +34,6 @@ use {
         traits::{IsIdentity, VartimeMultiscalarMul},
     },
     merlin::Transcript,
-    subtle::CtOption,
 };
 
 pub mod errors;
@@ -385,15 +384,23 @@ impl RangeProof {
         let T_1 = CompressedRistretto(util::read32(&slice[2 * 32..]));
         let T_2 = CompressedRistretto(util::read32(&slice[3 * 32..]));
 
-        let t_x = Scalar::from_canonical_bytes(util::read32(&slice[4 * 32..]))
-            .into()
-            .ok_or(RangeProofVerificationError::Deserialization)?;
-        let t_x_blinding = Scalar::from_canonical_bytes(util::read32(&slice[5 * 32..]))
-            .into()
-            .ok_or(RangeProofVerificationError::Deserialization)?;
-        let e_blinding = Scalar::from_canonical_bytes(util::read32(&slice[6 * 32..]))
-            .into()
-            .ok_or(RangeProofVerificationError::Deserialization)?;
+        let t_x = Scalar::from_canonical_bytes(util::read32(&slice[4 * 32..])).into();
+        let t_x = match t_x {
+            Some(t_x) => t_x,
+            None => return Err(RangeProofVerificationError::Deserialization),
+        };
+
+        let t_x_blinding = Scalar::from_canonical_bytes(util::read32(&slice[5 * 32..])).into();
+        let t_x_blinding = match t_x_blinding {
+            Some(t_x_blinding) => t_x_blinding,
+            None => return Err(RangeProofVerificationError::Deserialization),
+        };
+
+        let e_blinding = Scalar::from_canonical_bytes(util::read32(&slice[6 * 32..])).into();
+        let e_blinding = match e_blinding {
+            Some(e_blinding) => e_blinding,
+            None => return Err(RangeProofVerificationError::Deserialization),
+        };
 
         let ipp_proof = InnerProductProof::from_bytes(&slice[7 * 32..])?;
 

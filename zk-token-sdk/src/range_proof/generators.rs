@@ -1,10 +1,7 @@
 use {
     crate::range_proof::errors::RangeProofGeneratorError,
-    curve25519_dalek::ristretto::RistrettoPoint,
-    sha3::{
-        digest::{ExtendableOutput, Update, XofReader},
-        Sha3XofReader, Shake256,
-    },
+    curve25519_dalek::{digest::ExtendableOutput, ristretto::RistrettoPoint},
+    sha3::{digest::Update, Shake256},
 };
 
 #[cfg(not(target_os = "solana"))]
@@ -12,7 +9,7 @@ const MAX_GENERATOR_LENGTH: usize = u32::MAX as usize;
 
 /// Generators for Pedersen vector commitments that are used for inner-product proofs.
 struct GeneratorsChain {
-    reader: Sha3XofReader,
+    reader: Shake256,
 }
 
 impl GeneratorsChain {
@@ -22,17 +19,14 @@ impl GeneratorsChain {
         shake.update(b"GeneratorsChain");
         shake.update(label);
 
-        GeneratorsChain {
-            reader: shake.finalize_xof(),
-        }
+        GeneratorsChain { reader: shake }
     }
 
     /// Advances the reader n times, squeezing and discarding
     /// the result.
-    fn fast_forward(mut self, n: usize) -> Self {
+    fn fast_forward(self, n: usize) -> Self {
         for _ in 0..n {
-            let mut buf = [0u8; 64];
-            self.reader.read(&mut buf);
+            self.reader.clone().finalize_xof();
         }
         self
     }
@@ -48,8 +42,8 @@ impl Iterator for GeneratorsChain {
     type Item = RistrettoPoint;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let mut uniform_bytes = [0u8; 64];
-        self.reader.read(&mut uniform_bytes);
+        let uniform_bytes = [0u8; 64];
+        self.reader.clone().finalize_xof();
 
         Some(RistrettoPoint::from_uniform_bytes(&uniform_bytes))
     }

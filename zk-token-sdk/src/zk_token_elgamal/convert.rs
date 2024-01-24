@@ -52,7 +52,6 @@ mod target_arch {
         crate::{curve25519::scalar::PodScalar, encryption::elgamal::ElGamalError},
         curve25519_dalek::{ristretto::CompressedRistretto, scalar::Scalar},
         std::convert::TryFrom,
-        subtle::CtOption,
     };
 
     impl From<Scalar> for PodScalar {
@@ -65,7 +64,11 @@ mod target_arch {
         type Error = ElGamalError;
 
         fn try_from(pod: PodScalar) -> Result<Self, Self::Error> {
-            Scalar::from_canonical_bytes(pod.0).or_else(|| Err(ElGamalError::InvalidScalar))
+            let scalar_option: Option<Scalar> = Scalar::from_canonical_bytes(pod.0).into();
+            match scalar_option {
+                Some(scalar) => Ok(scalar),
+                None => Err(ElGamalError::CiphertextDeserialization),
+            }
         }
     }
 
